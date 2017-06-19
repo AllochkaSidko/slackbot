@@ -3,6 +3,8 @@ var cron = require('node-cron');
 var HashMap = require('hashmap');
 var mysql = require('mysql');
 
+var channelId = 'C5K9XRGQ4';
+
 var con = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -109,9 +111,9 @@ function checkDate(date,checkdate, text)
 
         bot.startConversation({
             //!!!user: 'U5JM7JLKB' ,
-            channel:  'C5K9XRGQ4', 
+            channel: channelId, 
         }, (err, convo) => {
-            convo.say('@channel')
+           // convo.say('@channel')
             convo.say(text)
         });
         
@@ -119,8 +121,20 @@ function checkDate(date,checkdate, text)
 
 }
 
-controller.hears('chanel',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
-         bot.reply(message,'Hello <@$channel>');
+controller.hears('channel',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
+         bot.reply(message,'Now notifications will be send in channel with id '+channelId);
+});
+
+controller.hears('change',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
+        bot.startConversation(message,function(err,convo) {
+        convo.addQuestion('Enter new channel id.',function(response,convo) {
+          channelId = response.text;
+          convo.say('Now channel id is '+channelId);
+          convo.say('Don\'t forget to invite me to this channel!');
+          convo.next();
+           },
+    {},'default');
+        })
 });
 
 
@@ -188,7 +202,8 @@ controller.hears(
 
 var helpmsg = 'I heard that you need my help!\n So, if you want to see your deadlines type - all\n'+
 'To see nearest deadline type - deadline\n' + 'To add new deadlines - add\n' + 
-'To delete - delete';
+'To delete - delete\n'+'To see channel id, in wich notifications will be sent, type - channel\n'+
+'To change this id - change';
 controller.hears(
   ['help'], ['direct_message', 'direct_mention', 'mention'],
   function (bot, message) { bot.reply(message, helpmsg ) })
@@ -345,11 +360,9 @@ function insertIntoMap()
 {
 con.query("SELECT * FROM deadlines", function (err, result) {
     if (err) throw err;
-    console.log(result);
     result.forEach(function(item)
     {
       map.set(item.name, item.date)
-      console.log(map.get(item.name)+'\n');
     })
 });
 }
