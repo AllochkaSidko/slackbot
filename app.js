@@ -1,6 +1,21 @@
 var Botkit = require('botkit')
 var cron = require('node-cron');
 var HashMap = require('hashmap');
+var mysql = require('mysql');
+
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "12345",
+  database: "botdb"
+});
+
+
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+});
+
 
 var token = 'xoxb-192818834532-ePVVVPkuJmSXwBFXwzteeVic'
 var controller = Botkit.slackbot({
@@ -36,8 +51,8 @@ controller.on('bot_channel_join', function (bot, message) {
 })
 
 
-
-var map = new HashMap('Deadline 1','2017-06-25T16:46','Deadline 2', '2017-06-15T17:47','Deadline 3' ,'2017-07-15T16:48');
+var map = new HashMap();
+insertIntoMap();
  
 cron.schedule('* * * * *', function()
 {
@@ -94,7 +109,7 @@ function checkDate(date,checkdate, text)
 
         bot.startConversation({
             //!!!user: 'U5JM7JLKB' ,
-            channel:  'C5K9XRGQ4',
+            channel:  'C5K9XRGQ4', 
         }, (err, convo) => {
             convo.say('@channel')
             convo.say(text)
@@ -114,7 +129,10 @@ function deleteInvalidDate()
   map.forEach(function(value, key) {
     var date = new Date(value);
     if(!checkInvalidDate(date))
-    map.remove(key);
+       {
+         map.remove(key);
+         removeFromDB(key);
+       }
   })
 }
 
@@ -210,9 +228,17 @@ function printall()
         if(enteredpass==='12345') 
         { 
         convo.addQuestion('Enter name of deadline you want to delete.',function(response,convo) {
-         var namedelete = response.text;
-        map.remove(namedelete);  convo.say(namedelete + ' removed!');
-           convo.next();  
+        var namedelete = response.text;
+        if(map.has(namedelete))
+        {
+          map.remove(namedelete);  
+          removeFromDB(namedelete);
+          convo.say(namedelete + ' removed!');
+        }
+        else 
+        convo.say('Such deadline doesn\'t exists!');
+
+        convo.next();  
     },
     {},'default');
           }
@@ -272,6 +298,7 @@ controller.hears(['add'],  ['direct_message', 'direct_mention', 'mention'], func
            else
            {
              map.set(newname, newDateTime);
+             addIntoDB(newname, newDateTime);
              convo.say('Time: ' + response.text);
              convo.next();  
            } 
@@ -293,150 +320,39 @@ controller.hears(['add'],  ['direct_message', 'direct_mention', 'mention'], func
 });
 
 
+function addIntoDB(addname,adddate)
+{
+ var sql = "INSERT INTO deadlines (name, date) VALUES ?";
+ var value = [[addname, adddate]];
+   con.query(sql,[value], function (err, result) {
+    if (err) throw err;
+    console.log("1 record inserted");
+  });
+}
 
 
+function removeFromDB(deletename)
+{
+ var sql = "DELETE FROM deadlines WHERE name = ?";
+  con.query(sql,deletename, function (err, result) {
+    if (err) throw err;
+    console.log("Number of records deleted: " + result.affectedRows);
+  });
+}
 
 
-  /*controller.hears(
-  ['add'],
-  [ 'direct_message'],
-  function (bot, message) {
-    bot.startConversation(message, function (err, convo) {
-      if (err) {
-        console.log(err)
-        return
-      }
-      convo.ask('I heard that you want to add new deadline! So, enter name of your deadline.',[
-        {
-          pattern: '[a-z]+',
-          callback: function (response, convo) {
-            convo.say('Great!')
-            var newname = response;
-            convo.next()
-            convo.ask('What date of your deadline? Format YYYY-MM-DD', [
-              {
-                pattern: '^(\d{4})-(\d{1,2})-(\d{1,2})$',
-                callback: function (response, convo) {
-                  var newdate = response;
-                  convo.next()
-
-                 convo.ask('What about time?', [
-              {
-                //pattern: '[0-9]+',
-                callback: function (response, convo) {
-                  convo.say('I added your deadline !')
-                  var newtime = response;
-                }
-                  }])
-
-                }
-              }])
-
-          }
-        }])
+function insertIntoMap()
+{
+con.query("SELECT * FROM deadlines", function (err, result) {
+    if (err) throw err;
+    console.log(result);
+    result.forEach(function(item)
+    {
+      map.set(item.name, item.date)
+      console.log(map.get(item.name)+'\n');
     })
-  })
-*/
+});
+}
 
-                 
-          
 
-/*
-// START: listen for cat emoji delivery
-var maxCats = 20
-var catEmojis = [
-  ':smile_cat:',
-  ':smiley_cat:',
-  ':joy_cat:',
-  ':heart_eyes_cat:',
-  ':smirk_cat:',
-  ':kissing_cat:',
-  ':scream_cat:',
-  ':crying_cat_face:',
-  ':pouting_cat:',
-  ':cat:',
-  ':cat2:',
-  ':leopard:',
-  ':lion_face:',
-  ':tiger:',
-  ':tiger2:'
-]
-
-controller.hears(
-  ['cat', 'cats', 'kitten', 'kittens'],
-  ['ambient', 'direct_message', 'direct_mention', 'mention'],
-  function (bot, message) {
-    bot.startConversation(message, function (err, convo) {
-      if (err) {
-        console.log(err)
-        return
-      }
-      convo.ask('Does someone need a kitten delivery? Say YES or NO.', [
-        {
-          pattern: bot.utterances.yes,
-          callback: function (response, convo) {
-            convo.say('Great!')
-            convo.ask('How many?', [
-              {
-                pattern: '[0-9]+',
-                callback: function (response, convo) {
-                  var numCats =
-                  parseInt(response.text.replace(/[^0-9]/g, ''), 10)
-                  if (numCats === 0) {
-                    convo.say({
-                      'text': 'Sorry to hear you want zero kittens. ' +
-                        'Here is a dog, instead. :dog:',
-                      'attachments': [
-                        {
-                          'fallback': 'Chihuahua Bubbles - https://youtu.be/s84dBopsIe4',
-                          'text': '<https://youtu.be/s84dBopsIe4|' +
-                            'Chihuahua Bubbles>!'
-                        }
-                      ]
-                    })
-                  } else if (numCats > maxCats) {
-                    convo.say('Sorry, ' + numCats + ' is too many cats.')
-                  } else {
-                    var catMessage = ''
-                    for (var i = 0; i < numCats; i++) {
-                      catMessage = catMessage +
-                      catEmojis[Math.floor(Math.random() * catEmojis.length)]
-                    }
-                    convo.say(catMessage)
-                  }
-                  convo.next()
-                }
-              },
-              {
-                default: true,
-                callback: function (response, convo) {
-                  convo.say(
-                    "Sorry, I didn't understand that. Enter a number, please.")
-                  convo.repeat()
-                  convo.next()
-                }
-              }
-            ])
-            convo.next()
-          }
-        },
-        {
-          pattern: bot.utterances.no,
-          callback: function (response, convo) {
-            convo.say('Perhaps later.')
-            convo.next()
-          }
-        },
-        {
-          default: true,
-          callback: function (response, convo) {
-            // Repeat the question.
-            convo.repeat()
-            convo.next()
-          }
-        }
-      ])
-    })
-  })
-  // END: listen for cat emoji delivery
-  */
+ 
