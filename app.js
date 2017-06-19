@@ -6,7 +6,7 @@ var mysql = require('mysql');
 var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "12345",
+  password: "1234",//"12345",
   database: "botdb"
 });
 
@@ -200,14 +200,14 @@ controller.hears(
 
 function printall()
 {
-  deleteInvalidDate();
-  if(!map.keys().length) return 'No deadlines!!!';
-  var s=''
-  map.forEach(function(value, key)
-   {
-    s+=key+' '+value.replace(/T/, ' ')+' \n'
-  })
-  return s;
+    deleteInvalidDate();
+    if(!map.keys().length) return 'No deadlines!!!';
+    var s=''
+    map.forEach(function(value, key)
+    {
+        s+=key+' '+value.replace(/T/, ' ')+' \n'
+    })
+    return s;
 }
 
   controller.hears(
@@ -219,139 +219,135 @@ function printall()
   
   controller.hears(
   ['delete'], ['direct_message', 'direct_mention', 'mention'],
-  function (bot, message) { 
-  
-      bot.startConversation(message,function(err,convo) {
-
-        convo.addQuestion('Enter password to delete.',function(response,convo) {
-        var enteredpass = response.text
-        if(enteredpass==='12345') 
-        { 
-        convo.addQuestion('Enter name of deadline you want to delete.',function(response,convo) {
-        var namedelete = response.text;
-        if(map.has(namedelete))
+  function (bot, message) 
+  {   
+        bot.startConversation(message,function(err,convo) 
         {
-          map.remove(namedelete);  
-          removeFromDB(namedelete);
-          convo.say(namedelete + ' removed!');
-        }
-        else 
-        convo.say('Such deadline doesn\'t exists!');
-
-        convo.next();  
-    },
-    {},'default');
-          }
-        else 
-        convo.say('Wrong password!!!');
-
- convo.next();
-        
-    },
-    {},'default');
-
-   
-  
- })})
-
-//TODO validation
-controller.hears(['add'],  ['direct_message', 'direct_mention', 'mention'], function(bot,message) {
-
-   var newname = ''
-   var newdate = ''
-   var newtime = ''
-    
-  // start a conversation to handle this response.
-  bot.startConversation(message,function(err,convo) {
- 
- convo.addQuestion('I heard that you want to add new deadline!Enter password to add.',function(response,convo) {
-        var enteredpass = response.text
-        if(enteredpass==='12345') 
-        { 
-    convo.addQuestion('Ok, enter name of your deadline.',function(response,convo) {
-          
-           newname = response.text
-           convo.say('Cool your deadline: ' + response.text);
-           convo.next();  
-
-    },
-    {},'default');
-
- convo.addQuestion('What date of your deadline? Format YYYY-MM-DD',function(response,convo) {
-          
-           newdate = response.text
-           convo.say('Date: ' + response.text);
-           convo.next();   
-
-    },
-    {},'default');
-
-     convo.addQuestion('What about time? Format HH:MM',function(response,convo) {
-          
-          newtime = response.text
-           var newDateTime = newdate+'T'+newtime;
-           if(!checkInvalidDate(new Date(newDateTime)) )
-           { convo.say('Invalid date!Try again');
-            // convo.repeat()
-             convo.next()
-           }
-           else
-           {
-             map.set(newname, newDateTime);
-             addIntoDB(newname, newDateTime);
-             convo.say('Time: ' + response.text);
-             convo.next();  
-           } 
-
-    },
-    {},'default');
-
-  }
-        else 
-        convo.say('Wrong password!!!');
-
- convo.next();
-        
-    },
-    {},'default');
-
+            convo.addQuestion('Enter password to delete.',function(response,convo) 
+            {
+                var enteredpass = response.text
+                if(enteredpass==='12345') 
+                { 
+                    convo.addQuestion('Enter name of deadline you want to delete.',function(response,convo) 
+                    {
+                        var namedelete = response.text;
+                        if(map.has(namedelete))
+                        {
+                            map.remove(namedelete);  
+                            removeFromDB(namedelete);
+                            convo.say(namedelete + ' removed!');
+                        }
+                        else 
+                            convo.say('Such deadline doesn\'t exist!');
+                        convo.next();  
+                    },{},'default');
+            }
+            else 
+                convo.say('Wrong password!!!');
+            convo.next();
+            },{},'default');  
+        })
   })
 
+// add new deadline  
+//TODO validation
+controller.hears(['add'],  ['direct_message', 'direct_mention', 'mention'], function(bot,message)
+{
+    var newname = ''
+    var newdate = ''
+    var newtime = ''
+    
+    // start a conversation to handle this response.
+    bot.startConversation(message,function(err,convo) 
+    {
+     convo.addQuestion('I heard that you want to add new deadline!Enter password to add.',function(response,convo)
+    {
+         var enteredpass = response.text
+         if(enteredpass==='12345') 
+         { 
+            convo.addQuestion('Ok, enter name of your deadline.',function(response,convo) 
+            {
+                newname = response.text
+                convo.say('Cool your deadline: ' + response.text);
+                convo.next(); 
+            },{},'default');
+
+        convo.addQuestion('What date of your deadline? Format YYYY-MM-DD',function(response,convo) 
+        {
+            newdate = response.text
+            convo.say('Date: ' + response.text);
+            convo.next();   
+        },{},'default');
+
+        convo.addQuestion('What about time? Format HH:MM',function(response,convo) 
+        {
+            newtime = response.text
+            var newDateTime = newdate+'T'+newtime;
+            if(!checkInvalidDate(new Date(newDateTime)) )
+            { 
+                convo.say('Invalid date!Try again');
+                convo.next()
+             }
+             else
+             {
+                if(map.has(newname))
+                {
+                    convo.say('Such deadline already exists!Please, try another name:');
+                    convo.next();   
+                }else{
+                    map.set(newname, newDateTime);
+                    addIntoDB(newname, newDateTime);
+                    convo.say('Time: ' + response.text);
+                    convo.next();  
+                }
+            }
+        },{},'default');
+  }
+        else 
+            convo.say('Wrong password!!!');
+
+ convo.next();
+        
+    },{},'default');
+  })
 });
 
 
 function addIntoDB(addname,adddate)
 {
- var sql = "INSERT INTO deadlines (name, date) VALUES ?";
- var value = [[addname, adddate]];
-   con.query(sql,[value], function (err, result) {
-    if (err) throw err;
-    console.log("1 record inserted");
-  });
+    var sql = "INSERT INTO deadlines (name, date) VALUES ?";
+    var value = [[addname, adddate]];
+    con.query(sql,[value], function (err, result) 
+    {
+        if (err) throw err;
+            console.log("1 record inserted");
+    });
 }
 
 
 function removeFromDB(deletename)
 {
- var sql = "DELETE FROM deadlines WHERE name = ?";
-  con.query(sql,deletename, function (err, result) {
-    if (err) throw err;
-    console.log("Number of records deleted: " + result.affectedRows);
-  });
+    var sql = "DELETE FROM deadlines WHERE name = ?";
+    con.query(sql,deletename, function (err, result) 
+    {
+        if (err) throw err;
+            console.log("Number of records deleted: " + result.affectedRows);
+    });
 }
 
 
 function insertIntoMap()
 {
-con.query("SELECT * FROM deadlines", function (err, result) {
-    if (err) throw err;
-    console.log(result);
-    result.forEach(function(item)
+    con.query("SELECT * FROM deadlines", function (err, result) 
     {
-      map.set(item.name, item.date)
-      console.log(map.get(item.name)+'\n');
-    })
-});
+        if (err) throw err;
+        console.log(result);
+        result.forEach(function(item)
+        {
+            map.set(item.name, item.date)
+            console.log(map.get(item.name)+'\n');
+        })
+    });
 }
 
 
