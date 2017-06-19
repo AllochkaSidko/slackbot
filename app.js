@@ -353,7 +353,7 @@ function removeFromDB(deletename)
 
 function insertIntoMap()
 {
-<<<<<<< HEAD
+//<<<<<<< HEAD
     con.query("SELECT * FROM deadlines", function (err, result) 
     {
         if (err) throw err;
@@ -364,7 +364,7 @@ function insertIntoMap()
             console.log(map.get(item.name)+'\n');
         })
     });
-=======
+//=======
 con.query("SELECT * FROM deadlines", function (err, result) {
     if (err) throw err;
     result.forEach(function(item)
@@ -372,7 +372,7 @@ con.query("SELECT * FROM deadlines", function (err, result) {
       map.set(item.name, item.date)
     })
 });
->>>>>>> 5cbaa93d5c2f6078872821f5e1dc4a8875a08e85
+//>>>>>>> 5cbaa93d5c2f6078872821f5e1dc4a8875a08e85
 }
 
 
