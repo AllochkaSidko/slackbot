@@ -1,14 +1,15 @@
 var Botkit = require('botkit')
 var cron = require('node-cron');
 var HashMap = require('hashmap');
-var mysql = require('mysql');
+//var mysql = require('mysql');
+var http = require('http');
 
-var channelId = 'C5K9XRGQ4';
+var channelId = 'C5JAU2K9C';
 
-var con = mysql.createConnection({
+/*var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "1234",//"12345",
+  password: "12345",//"12345",
   database: "botdb"
 });
 
@@ -17,9 +18,24 @@ con.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
 });
+*/
 
+//loads http module
+var app=http.createServer(function (req, res) {
+//creates server
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  //sets the right header and status code
+  res.end('Hello World\n');
+  //outputs string with line end symbol
+});
+var port = process.env.PORT || 5000;
+app.listen(port, function() {
+  console.log("Listening on " + port);
+});
 
-var token = 'xoxb-192818834532-ePVVVPkuJmSXwBFXwzteeVic'
+var token = process.env.TOKEN
+
+//var token = 'xoxb-199692722048-jlX5EV3xcn4IOim9FL013Uky'
 var controller = Botkit.slackbot({
   // reconnect to Slack RTM when connection goes bad
   retry: Infinity,
@@ -41,11 +57,6 @@ if (!token) {
 
     console.log('Connected to Slack RTM')
   })
-// Otherwise assume multi-team mode - setup beep boop resourcer connection
-//} else {
-//  console.log('Starting in Beep Boop multi-team mode')
- // require('beepboop-botkit').start(controller, { debug: true })
-//}
 
 
 controller.on('bot_channel_join', function (bot, message) {
@@ -54,7 +65,7 @@ controller.on('bot_channel_join', function (bot, message) {
 
 
 var map = new HashMap();
-insertIntoMap();
+//insertIntoMap();
  
 cron.schedule('* * * * *', function()
 {
@@ -145,7 +156,7 @@ function deleteInvalidDate()
     if(!checkInvalidDate(date))
        {
          map.remove(key);
-         removeFromDB(key);
+         //removeFromDB(key);
        }
   })
 }
@@ -249,7 +260,7 @@ function printall()
                         if(map.has(namedelete))
                         {
                             map.remove(namedelete);  
-                            removeFromDB(namedelete);
+                            //removeFromDB(namedelete);
                             convo.say(namedelete + ' removed!');
                         }
                         else 
@@ -311,7 +322,7 @@ controller.hears(['add'],  ['direct_message', 'direct_mention', 'mention'], func
                     convo.next();   
                 }else{
                     map.set(newname, newDateTime);
-                    addIntoDB(newname, newDateTime);
+                    //addIntoDB(newname, newDateTime);
                     convo.say('Time: ' + response.text);
                     convo.next();  
                 }
@@ -328,7 +339,7 @@ controller.hears(['add'],  ['direct_message', 'direct_mention', 'mention'], func
 });
 
 
-function addIntoDB(addname,adddate)
+/*function addIntoDB(addname,adddate)
 {
     var sql = "INSERT INTO deadlines (name, date) VALUES ?";
     var value = [[addname, adddate]];
@@ -350,21 +361,8 @@ function removeFromDB(deletename)
     });
 }
 
-
 function insertIntoMap()
 {
-//<<<<<<< HEAD
-    con.query("SELECT * FROM deadlines", function (err, result) 
-    {
-        if (err) throw err;
-        console.log(result);
-        result.forEach(function(item)
-        {
-            map.set(item.name, item.date)
-            console.log(map.get(item.name)+'\n');
-        })
-    });
-//=======
 con.query("SELECT * FROM deadlines", function (err, result) {
     if (err) throw err;
     result.forEach(function(item)
@@ -372,8 +370,8 @@ con.query("SELECT * FROM deadlines", function (err, result) {
       map.set(item.name, item.date)
     })
 });
-//>>>>>>> 5cbaa93d5c2f6078872821f5e1dc4a8875a08e85
-}
 
+}
+*/
 
  
