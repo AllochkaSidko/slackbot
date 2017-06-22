@@ -134,6 +134,10 @@ controller.hears('channel',['direct_message', 'direct_mention', 'mention'],funct
          bot.reply(message,'Now notifications will be send in channel with id '+channelId);
 });
 
+controller.hears('date',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
+         bot.reply(message,new Date());
+});
+
 controller.hears('change',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
         bot.startConversation(message,function(err,convo) {
         convo.addQuestion('Enter new channel id.',function(response,convo) {
