@@ -137,7 +137,7 @@ controller.hears('channel',['direct_message', 'direct_mention', 'mention'],funct
 var now = new Date()
 
 controller.hears('date',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
-         bot.reply(message,'now is ');
+         bot.reply(message,'now is '+ now);
 });
 
 controller.hears('change',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
