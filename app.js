@@ -140,7 +140,7 @@ cron.schedule('* * * * *', function()
 {
   now = new Date()
   
-}
+});
 
 controller.hears('date',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
          bot.reply(message,'now is '+ now);
