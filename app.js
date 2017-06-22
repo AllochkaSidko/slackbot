@@ -134,8 +134,10 @@ controller.hears('channel',['direct_message', 'direct_mention', 'mention'],funct
          bot.reply(message,'Now notifications will be send in channel with id '+channelId);
 });
 
+var now = new Date()
+
 controller.hears('date',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
-         bot.reply(message,new Date());
+         bot.reply(message,'now is ' + now);
 });
 
 controller.hears('change',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
