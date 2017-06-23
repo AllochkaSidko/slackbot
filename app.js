@@ -147,7 +147,7 @@ cron.schedule('* * * * *', function()
 });
 
 controller.hears('date',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
-         bot.reply(message,'now is '+ now);
+         bot.reply(message,'now is '+ now.getTimezoneOffset());
 });
 
 controller.hears('change',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
