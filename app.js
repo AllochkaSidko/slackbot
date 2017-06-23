@@ -149,6 +149,10 @@ controller.hears('date',['direct_message', 'direct_mention', 'mention'],function
          bot.reply(message,'now is '+ now.getHours() + ' ' + now.getMinutes()+'\n'+now);
 });
 
+controller.hears('now',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
+         bot.reply(message,'now is ');
+});
+
 controller.hears('change',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
         bot.startConversation(message,function(err,convo) {
         convo.addQuestion('Enter new channel id.',function(response,convo) {
