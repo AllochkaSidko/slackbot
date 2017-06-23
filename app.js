@@ -138,7 +138,11 @@ var now = new Date()
 
 cron.schedule('* * * * *', function()
 {
-  now = new Date()
+   now = new Date();
+  if(now.getTimezoneOffset()==0)
+    {
+      now.setHours(now.getHours+3);
+    }
   
 });
 
