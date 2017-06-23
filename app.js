@@ -71,6 +71,7 @@ cron.schedule('* * * * *', function()
   map.forEach(function(value, key) 
   {
     var now = new Date();
+    now.setHours(now.getHours()+3);
     var date = new Date(value);
     checkDate(date,now, key);
 
@@ -135,19 +136,17 @@ controller.hears('channel',['direct_message', 'direct_mention', 'mention'],funct
 });
 
 var now = new Date()
+now.setHours(now.getHours()+3);
 
 cron.schedule('* * * * *', function()
 {
    now = new Date();
-  if(now.getTimezoneOffset()==0)
-    {
-      now.setHours(now.getHours+3);
-    }
+  now.setHours(now.getHours()+3);
   
 });
 
 controller.hears('date',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
-         bot.reply(message,'now is '+ now.getTimezoneOffset());
+         bot.reply(message,'now is '+ now.getHours() + ' ' + now.getMinutes()+'\n'+now);
 });
 
 controller.hears('change',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
@@ -180,6 +179,7 @@ function deleteInvalidDate()
 function checkInvalidDate(date)
 {
   var now = new Date();
+  now.setHours(now.getHours()+3);
   
     if(now.getFullYear() > date.getFullYear())
       return false;
