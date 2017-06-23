@@ -33,13 +33,14 @@ app.listen(port, function() {
   console.log("Listening on " + port);
 });
 
-var token = process.env.TOKEN
+//var token = process.env.TOKEN
 
-//var token = 'xoxb-199692722048-jlX5EV3xcn4IOim9FL013Uky'
+var token = 'xoxb-199692722048-IdBOyqCI5R30S9IsPdcfJ1zD'
 var controller = Botkit.slackbot({
   // reconnect to Slack RTM when connection goes bad
   retry: Infinity,
-  debug: false
+  debug: false,
+  require_delivery: true
 })
 
 // Assume single team mode if we have a SLACK_TOKEN
@@ -73,6 +74,8 @@ cron.schedule('* * * * *', function()
   map.forEach(function(value, key) 
   {
     var now = new Date();
+      //now.setHours(now.getHours()+3);
+    
     var date = new Date(value);
     checkDate(date,now, key);
 
@@ -138,6 +141,11 @@ controller.hears('channel',['direct_message', 'direct_mention', 'mention'],funct
 
 controller.hears('change',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
         bot.startConversation(message,function(err,convo) {
+           convo.addQuestion('Enter password to change channel id',function(response,convo) 
+            {
+                var enteredpass = response.text
+                if(enteredpass==='12345') 
+                { 
         convo.addQuestion('Enter new channel id.',function(response,convo) {
           channelId = response.text;
           convo.say('Now channel id is '+channelId);
@@ -145,6 +153,11 @@ controller.hears('change',['direct_message', 'direct_mention', 'mention'],functi
           convo.next();
            },
     {},'default');
+                }
+       else 
+            convo.say('Wrong password!!!');
+            convo.next();
+          },{},'default');  
         })
 });
 
@@ -166,6 +179,9 @@ function deleteInvalidDate()
 function checkInvalidDate(date)
 {
   var now = new Date();
+ 
+     // now.setHours(now.getHours()+3);
+    
   
     if(now.getFullYear() > date.getFullYear())
       return false;
@@ -206,10 +222,33 @@ function firstdate(){
 
 }
 
+
+var now = new Date()
+now.setHours(now.getHours()+3);
+
+cron.schedule('* * * * *', function()
+{
+   now = new Date();
+  
+      now.setHours(now.getHours()+3);
+    
  
+  
+});
+
+controller.hears('date',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
+         bot.reply(message,'now is '+ now.getHours() + ' ' + now.getMinutes()+'\n'+now);
+});
+
+var msg = {'username': 'My bot','text' :'hi',icon_emoji: ":dash:", 'attachments': [ {'color': '#7CD197','image_url' : 'https://static1.squarespace.com/static/5783a7e19de4bb11478ae2d8/t/5821d2ea09e1c46748737af1/1478614300894/shutterstock_217082875-e1459952801830.jpg'}]} 
+ controller.hears(
+  [ 'hihi'], ['direct_message', 'direct_mention', 'mention'],
+  function (bot, message) { bot.reply(message, msg ) })
+
+
 controller.hears(
   ['hello', 'hi', 'halo'], ['direct_message', 'direct_mention', 'mention'],
-  function (bot, message) { bot.reply(message, 'Hello! I\'m notification bot!\n\n If you will need a help just type help and I\'m trying to help you! ' ) })
+  function (bot, message) { bot.reply(message, ':dash:' + 'Hello! I\'m notification bot!\n\n If you will need a help just type help and I\'m trying to help you! ' ) })
 
 var helpmsg = 'I heard that you need my help!\n So, if you want to see your deadlines type - all\n'+
 'To see nearest deadline type - deadline\n' + 'To add new deadlines - add\n' + 
