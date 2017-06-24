@@ -31,7 +31,7 @@ app.listen(port, function() {
   console.log("Listening on " + port);
 });
 
-//var token = process.env.TOKEN
+var token = process.env.TOKEN
 
 
 var controller = Botkit.slackbot({
