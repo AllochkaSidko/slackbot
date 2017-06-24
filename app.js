@@ -75,7 +75,7 @@ cron.schedule('* * * * *', function()
   map.forEach(function(value, key) 
   {
     var now = new Date();
-    now.setHours(now.getHours()+3);
+    now.setHours(now.getHours()+1);
     var date = new Date(value);
     var msg = {'text' :'Your deadline is closed!',icon_emoji: ":champagne:", 'attachments': [ {"title": key, "color": "#000000",
     'image_url' : 'https://static1.squarespace.com/static/5783a7e19de4bb11478ae2d8/t/5821d2ea09e1c46748737af1/1478614300894/shutterstock_217082875-e1459952801830.jpg'}]} 
@@ -156,12 +156,12 @@ controller.hears('channel',['direct_message', 'direct_mention', 'mention'],funct
 });
 
 var now = new Date()
-now.setHours(now.getHours()+3);
+now.setHours(now.getHours()+1);
 
 cron.schedule('* * * * *', function()
 {
    now = new Date();
-  now.setHours(now.getHours()+3);
+  now.setHours(now.getHours()+1);
   
 });
 
@@ -210,7 +210,7 @@ function deleteInvalidDate()
 function checkInvalidDate(date)
 {
   var now = new Date();
-now.setHours(now.getHours()+3);
+now.setHours(now.getHours()+1);
 
     if(now.getFullYear() > date.getFullYear())
       return false;
