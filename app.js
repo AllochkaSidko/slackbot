@@ -75,8 +75,7 @@ cron.schedule('* * * * *', function()
   map.forEach(function(value, key) 
   {
     var now = new Date();
-      //now.setHours(now.getHours()+3);
-    
+    now.setHours(now.getHours()+3);
     var date = new Date(value);
     var msg = {'text' :'Your deadline is closed!',icon_emoji: ":champagne:", 'attachments': [ {"title": key, "color": "#000000",
     'image_url' : 'https://static1.squarespace.com/static/5783a7e19de4bb11478ae2d8/t/5821d2ea09e1c46748737af1/1478614300894/shutterstock_217082875-e1459952801830.jpg'}]} 
@@ -142,7 +141,6 @@ function checkDate(date,checkdate, text)
      &&checkdate.getHours() == date.getHours()&& checkdate.getMinutes() == date.getMinutes())
      {
      console.log(text);
-
         bot.startConversation({
             channel: channelId, 
         }, (err, convo) => {
@@ -156,6 +154,21 @@ function checkDate(date,checkdate, text)
 controller.hears('channel',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
          bot.reply(message,'Now notifications will be send in channel with id '+channelId);
 });
+
+var now = new Date()
+now.setHours(now.getHours()+3);
+
+cron.schedule('* * * * *', function()
+{
+   now = new Date();
+  now.setHours(now.getHours()+3);
+  
+});
+
+controller.hears('date',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
+         bot.reply(message,'now is '+ now.getHours() + ' ' + now.getMinutes()+'\n'+now);
+});
+
 
 controller.hears('change',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
         bot.startConversation(message,function(err,convo) {
@@ -197,9 +210,8 @@ function deleteInvalidDate()
 function checkInvalidDate(date)
 {
   var now = new Date();
- 
-     // now.setHours(now.getHours()+3);
-  
+now.setHours(now.getHours()+3);
+
     if(now.getFullYear() > date.getFullYear())
       return false;
     
