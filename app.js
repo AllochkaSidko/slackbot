@@ -35,12 +35,14 @@ app.listen(port, function() {
 
 //var token = process.env.TOKEN
 
-var token = 'xoxb-199692722048-IdBOyqCI5R30S9IsPdcfJ1zD'
+
 var controller = Botkit.slackbot({
   // reconnect to Slack RTM when connection goes bad
   retry: Infinity,
   debug: false,
   require_delivery: true
+ 
+
 })
 
 // Assume single team mode if we have a SLACK_TOKEN
@@ -51,6 +53,7 @@ if (!token) {
  // console.log('Starting in single-team mode')
  var bot =  controller.spawn({
     token: token
+
   }).startRTM(function (err, bot, payload) {
     if (err) {
       throw new Error(err)
@@ -61,7 +64,7 @@ if (!token) {
 
 
 controller.on('bot_channel_join', function (bot, message) {
-  bot.reply(message, "I'm here!")
+  bot.reply(message, "Hello!:wave:  My name is deadliner!\n I'm here to help you not to miss your deadlines!")
 })
 
 
@@ -77,39 +80,58 @@ cron.schedule('* * * * *', function()
       //now.setHours(now.getHours()+3);
     
     var date = new Date(value);
-    checkDate(date,now, key);
+    var msg = {'text' :'Your deadline is closed!',icon_emoji: ":champagne:", 'attachments': [ {"title": key, "color": "#000000",
+    'image_url' : 'https://static1.squarespace.com/static/5783a7e19de4bb11478ae2d8/t/5821d2ea09e1c46748737af1/1478614300894/shutterstock_217082875-e1459952801830.jpg'}]} 
+    checkDate(date,now, msg);
 
     var month = new Date(now);
     month.setMonth(now.getMonth()+1);
-    checkDate(date, month, 'Month left to deadline ' + key);
+    msg = {'text' :'Month left to deadline!',icon_emoji: ":crescent_moon:", 'attachments': [ {"title": key, "color": "#ffccff",
+    'image_url' : 'http://www.pr4ngo.eu/wp-content/uploads/2015/01/do-not-keep-calm-bitch-you-have-a-deadline.png'}]} 
+    checkDate(date, month, msg);
 
     var tendays = new Date(now);
     tendays.setDate(now.getDate()+10);
-    checkDate(date, tendays, '10 days left to deadline ' + key);
+    msg = {'text' :'10 days left to deadline! ',icon_emoji: ":crystal_ball:", 'attachments': [ {"title": key, "color": "#990099",
+    'image_url' : 'http://hirologos.in.ua/images/stories/jokes/vizhu-dedlajn.jpg'}]}  
+    checkDate(date, tendays, msg);
 
     var weekdate = new Date(now);
     weekdate.setDate(now.getDate()+7);
-    checkDate(date, weekdate, '7 days left to deadline ' + key);
+    msg = {'text' :'7 days left to deadline! ',icon_emoji: ":hankey:", 'attachments': [ {"title": key, "color": "#2d862d",
+    'image_url' : 'http://cs8.pikabu.ru/post_img/2016/07/30/11/1469906048174756713.jpg'}]}  
+    checkDate(date, weekdate, msg);
 
     var threedays = new Date(now);
     threedays.setDate(now.getDate()+3);
-    checkDate(date, threedays, '3 days left to deadline ' + key);
+     msg = {'text' :'3 days left to deadline! ',icon_emoji: ":smiling_imp:", 'attachments': [ {"title": key, "color": "#6699ff",
+    'image_url' : 'http://phptime.ru/uploads/images/00/00/01/2013/01/17/cc7330.jpg'}]}  
+    checkDate(date, threedays, msg);
 
     var oneday = new Date(now);
     oneday.setDate(now.getDate()+1);
-    checkDate(date, oneday, 'One day left to deadline ' + key);
+     msg = {'text' :'One day left to deadline! ',icon_emoji: ":tired_face:", 'attachments': [ {"title": key, "color": "#ffff33",
+    'image_url' : 'http://everest-center.com/wp-content/uploads/Dedlajn-vzhe-blizko.jpg'}]}  
+    checkDate(date, oneday, msg);
     
     var hour = new Date(now);
     hour.setHours(now.getHours()+1);
-    checkDate(date, hour, 'Be careful!!! Only one hour left to deadline ' + key);
+     msg = {'text' :'Be careful!!! Only one hour left to deadline! ',icon_emoji: ":runner:", 'attachments': [ {"title": key, "color": "#ff6600",
+    'image_url' : 'http://cdn2.thegrindstone.com/wp-content/uploads/2013/08/woman-missed-deadline.jpg'}]}  
+    checkDate(date, hour, msg);
 
     var half = new Date(now);
     half.setMinutes(now.getMinutes()+30);
-    checkDate(date, half, 'Be careful!!! 30 minutes left to deadline ' + key);
+     msg = {'text' :'Be careful!!! 30 minutes left to deadline! ',icon_emoji: ":tornado:", 'attachments': [ {"title": key, "color": "#ff0066",
+    'image_url' : 'http://begin-english.ru/img/word/deadline.jpg'}]}  
+    checkDate(date, half, msg);
 
     var five = new Date(now);
     five.setMinutes(now.getMinutes()+5);
-    checkDate(date, five, '5 minutes left to deadline ' + key);
+     msg = {'text' :'5 minutes left to deadline! ',icon_emoji: ":bomb:", 'attachments': [ {"title": key, "color": "#e60000",
+    'image_url' : 'http://www.smh.com.au/cqstatic/gn4tk9/animatedidea.gif'}]}  
+   
+    checkDate(date, five, msg);
 
   });
 });
@@ -124,10 +146,8 @@ function checkDate(date,checkdate, text)
      console.log(text);
 
         bot.startConversation({
-            //!!!user: 'U5JM7JLKB' ,
             channel: channelId, 
         }, (err, convo) => {
-           // convo.say('@channel')
             convo.say(text)
         });
         
@@ -146,13 +166,13 @@ controller.hears('change',['direct_message', 'direct_mention', 'mention'],functi
                 var enteredpass = response.text
                 if(enteredpass==='12345') 
                 { 
-        convo.addQuestion('Enter new channel id.',function(response,convo) {
-          channelId = response.text;
-          convo.say('Now channel id is '+channelId);
-          convo.say('Don\'t forget to invite me to this channel!');
-          convo.next();
+                  convo.addQuestion('Enter new channel id.',function(response,convo) {
+                    channelId = response.text;
+                    convo.say('Now channel id is '+channelId);
+                    convo.say('Don\'t forget to invite me to this channel!');
+                    convo.next();
            },
-    {},'default');
+        {},'default');
                 }
        else 
             convo.say('Wrong password!!!');
@@ -181,7 +201,6 @@ function checkInvalidDate(date)
   var now = new Date();
  
      // now.setHours(now.getHours()+3);
-    
   
     if(now.getFullYear() > date.getFullYear())
       return false;
@@ -216,41 +235,17 @@ function checkInvalidDate(date)
 
 function firstdate(){
   deleteInvalidDate();
-  if(!map.keys().length) return 'No deadlines!!!';
+  if(!map.keys().length) return 'You don\'t have any deadlines! :tada:';
   var array = map.values().sort();
   return  map.search(array[0]) + ' ' + array[0].replace(/T/, ' ');
 
 }
 
-
-var now = new Date()
-now.setHours(now.getHours()+3);
-
-cron.schedule('* * * * *', function()
-{
-   now = new Date();
-  
-      now.setHours(now.getHours()+3);
-    
- 
-  
-});
-
-controller.hears('date',['direct_message', 'direct_mention', 'mention'],function(bot, message) {
-         bot.reply(message,'now is '+ now.getHours() + ' ' + now.getMinutes()+'\n'+now);
-});
-
-var msg = {'username': 'My bot','text' :'hi',icon_emoji: ":dash:", 'attachments': [ {'color': '#7CD197','image_url' : 'https://static1.squarespace.com/static/5783a7e19de4bb11478ae2d8/t/5821d2ea09e1c46748737af1/1478614300894/shutterstock_217082875-e1459952801830.jpg'}]} 
- controller.hears(
-  [ 'hihi'], ['direct_message', 'direct_mention', 'mention'],
-  function (bot, message) { bot.reply(message, msg ) })
-
-
 controller.hears(
   ['hello', 'hi', 'halo'], ['direct_message', 'direct_mention', 'mention'],
-  function (bot, message) { bot.reply(message, ':dash:' + 'Hello! I\'m notification bot!\n\n If you will need a help just type help and I\'m trying to help you! ' ) })
+  function (bot, message) { bot.reply(message,'Hello!\n If you will need a help just type help and I\'m trying to help you!:wink:' ) })
 
-var helpmsg = 'I heard that you need my help!\n So, if you want to see your deadlines type - all\n'+
+var helpmsg = 'I heard that you need my help!:thinking_face: \n So, if you want to see your deadlines type - all\n'+
 'To see nearest deadline type - deadline\n' + 'To add new deadlines - add\n' + 
 'To delete - delete\n'+'To see channel id, in wich notifications will be sent, type - channel\n'+
 'To change this id - change';
@@ -260,13 +255,13 @@ controller.hears(
 
   controller.hears(
   ['deadline'], ['direct_message', 'direct_mention', 'mention'],
-  function (bot, message) { bot.reply(message, firstdate())})
+  function (bot, message) { bot.reply(message, ':fire: ' +firstdate())})
 
 
 function printall()
 {
     deleteInvalidDate();
-    if(!map.keys().length) return 'No deadlines!!!';
+    if(!map.keys().length) return  'You don\'t have any deadlines! :tada:';
     var s=''
     map.forEach(function(value, key)
     {
@@ -325,7 +320,7 @@ controller.hears(['add'],  ['direct_message', 'direct_mention', 'mention'], func
     // start a conversation to handle this response.
     bot.startConversation(message,function(err,convo) 
     {
-     convo.addQuestion('I heard that you want to add new deadline!Enter password to add.',function(response,convo)
+     convo.addQuestion('I heard that you want to add new deadline!\nFirst, Enter password ',function(response,convo)
     {
          var enteredpass = response.text
          if(enteredpass==='12345') 
@@ -333,7 +328,7 @@ controller.hears(['add'],  ['direct_message', 'direct_mention', 'mention'], func
             convo.addQuestion('Ok, enter name of your deadline.',function(response,convo) 
             {
                 newname = response.text
-                convo.say('Cool your deadline: ' + response.text);
+                convo.say('Cool! Your deadline: ' + response.text);
                 convo.next(); 
             },{},'default');
 
@@ -357,7 +352,7 @@ controller.hears(['add'],  ['direct_message', 'direct_mention', 'mention'], func
              {
                 if(map.has(newname))
                 {
-                    convo.say('Such deadline already exists!Please, try another name:');
+                    convo.say('Such deadline already exists!Please, try another name');
                     convo.next();   
                 }else{
                     map.set(newname, newDateTime);
