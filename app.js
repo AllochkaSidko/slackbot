@@ -8,8 +8,8 @@ var channelId = 'C5JAU2K9C';
 
 var con = mysql.createConnection({
   host: "169.44.4.114",
- user: "process.env.DB_USERNAME",
-  password: "process.env.DB_PASSWORD",
+ user: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
   database: "slackbot"
 });
 
