@@ -186,7 +186,7 @@ function deleteInvalidDate()
     if(!checkInvalidDate(date))
        {
          map.remove(key);
-         //removeFromDB(key);
+         removeFromDB(key);
        }
   })
 }
@@ -290,7 +290,7 @@ function printall()
                         if(map.has(namedelete))
                         {
                             map.remove(namedelete);  
-                            //removeFromDB(namedelete);
+                            removeFromDB(namedelete);
                             convo.say(namedelete + ' removed!');
                         }
                         else 
@@ -352,7 +352,7 @@ controller.hears(['add'],  ['direct_message', 'direct_mention', 'mention'], func
                     convo.next();   
                 }else{
                     map.set(newname, newDateTime);
-                    //addIntoDB(newname, newDateTime);
+                    addIntoDB(newname, newDateTime);
                     convo.say('Time: ' + response.text);
                     convo.next();  
                 }
@@ -369,7 +369,7 @@ controller.hears(['add'],  ['direct_message', 'direct_mention', 'mention'], func
 });
 
 
-/*function addIntoDB(addname,adddate)
+function addIntoDB(addname,adddate)
 {
     var sql = "INSERT INTO deadlines (name, date) VALUES ?";
     var value = [[addname, adddate]];
@@ -398,4 +398,4 @@ con.query("SELECT * FROM deadlines", function (err, result) {
     })
 });
 }
-*/
+
