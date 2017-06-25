@@ -6,17 +6,18 @@ var http = require('http');
 
 var channelId = 'C5JAU2K9C';
 
-/*var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "12345",//"12345",
-  database: "botdb"
+var con = mysql.createConnection({
+  host: "169.44.4.114",
+ user: "process.env.DB_USERNAME",
+  password: "process.env.DB_PASSWORD",
+  database: "slackbot"
 });
+
 con.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
 });
-*/
+
 
 //loads http module
 var app=http.createServer(function (req, res) {
