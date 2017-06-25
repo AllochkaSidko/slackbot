@@ -1,7 +1,7 @@
 var Botkit = require('botkit')
 var cron = require('node-cron');
 var HashMap = require('hashmap');
-//var mysql = require('mysql');
+var mysql = require('mysql');
 var http = require('http');
 
 var channelId = 'C5JAU2K9C';
