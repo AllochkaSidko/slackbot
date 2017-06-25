@@ -4,7 +4,7 @@ var HashMap = require('hashmap');
 var mysql = require('mysql');
 var http = require('http');
 
-var channelId = 'C5JAU2K9C';
+var channelId = 'C5GABTG4S';
 
 var con = mysql.createConnection({
   host: "169.44.4.114",
