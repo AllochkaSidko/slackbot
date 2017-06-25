@@ -353,7 +353,7 @@ controller.hears(['add'],  ['direct_message', 'direct_mention', 'mention'], func
         convo.addQuestion('What about time? Format HH:MM',function(response,convo) 
         {
             newtime = response.text
-            var newDateTime = newdate+'T'+newtime;
+            var newDateTime = newdate+'T'+newtime+'+03:00';
             if(!checkInvalidDate(new Date(newDateTime)) )
             { 
                 convo.say('Invalid date!Try again');
