@@ -144,7 +144,7 @@ function checkDate(date,checkdate, text)
         bot.startConversation({
             channel: channelId, 
         }, (err, convo) => {
-            convo.say(date.getTimezoneOffset()+ '\n' + checkdate.getTimezoneOffset())
+            convo.say(date + '\n' + checkdate)
         });
         
      }
