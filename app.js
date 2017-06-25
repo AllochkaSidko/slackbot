@@ -68,11 +68,11 @@ controller.on('bot_channel_join', function (bot, message) {
 
 
 var map = new HashMap();
-//insertIntoMap();
+insertIntoMap();
  
 cron.schedule('* * * * *', function()
 {
-  //TODO ?? first of sorted
+
   map.forEach(function(value, key) 
   {
     var now = new Date();
